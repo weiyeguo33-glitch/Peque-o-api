@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Usuarios API</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f9f9f9;
+    }
+    .container {
+      max-width: 800px;
+      margin: 50px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      text-align: center;
+      color: red;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    table th, table td {
+      padding: 10px;
+      text-align: left;
+      border: 1px solid #ddd;
+    }
+    table th {
+      background-color: #f4f4f4;
+    }
+    .error {
+      color: red;
+      text-align: center;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Lista de Usuarios</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Apellido</th>
+          <th>Email</th>
+        </tr>
+      </thead>
+      <tbody id="userTable">
+        <!-- Usuarios cargados dinámicamente aquí -->
+      </tbody>
+    </table>
+    <div id="error" class="error"></div>
+  </div>
+
+  <script>
+    // URL de la API (cambia localhost:4000 a la URL de tu API si es diferente)
+    const API_URL = 'http://localhost:4000/user';
+
+    // Referencias al DOM
+    const userTable = document.getElementById('userTable');
+    const errorDiv = document.getElementById('error');
+
+    // Función para cargar usuarios
+    async function loadUsers() {
+      try {
+        // Realizar la consulta fetch
+        const response = await fetch(API_URL);
+        console.log(response);
+        if (!response.ok) {
+          throw new Error(`Error HTTP: ${response.status}`);
+        }
+
+        // Parsear los datos como JSON
+        const users = await response.json();
+
+        // Limpiar el contenido previo
+        userTable.innerHTML = '';
+
+        // Generar filas de la tabla
+        users.forEach(user => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${user.id}</td>
+            <td>${user.nombre}</td>
+            <td>${user.apellido}</td>
+            <td>${user.email}</td>
+          `;
+          userTable.appendChild(row);
+        });
+      } catch (error) {
+        // Mostrar error si ocurre
+        errorDiv.textContent = `Error al cargar los usuarios: ${error.message}`;
+      }
+    }
+
+    // Llamar a la función para cargar usuarios al cargar la página
+    document.addEventListener('DOMContentLoaded', loadUsers);
+  </script>
+</body>
+</html>
